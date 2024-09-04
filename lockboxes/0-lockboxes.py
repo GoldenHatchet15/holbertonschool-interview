@@ -1,4 +1,9 @@
 #!/usr/bin/python3
+"""
+This module contains a function `canUnlockAll` that determines
+if all boxes can be unlocked in a set of boxes where each box
+may contain keys to other boxes.
+"""
 def canUnlockAll(boxes):
     n = len(boxes)
     unlocked = [False] * n
