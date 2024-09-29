@@ -1,16 +1,17 @@
-#include "sandpiles.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include "sandpiles.h"
 
 /**
- * print_grid - Prints the 3x3 grid
- * @grid: The 3x3 grid to print
- *
- * Description: Prints the grid row by row, with spaces between numbers.
+ * print_grid - print a sandpile grid
+ * @grid: tyoe int a sandpile 3 x 3
+ * Return: void
  */
-void print_grid(int grid[3][3])
+static void print_grid(int grid[3][3])
 {
 	int i, j;
 
+	printf("=\n");
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -24,15 +25,12 @@ void print_grid(int grid[3][3])
 }
 
 /**
- * is_stable - Checks if the grid is stable
- * @grid: The 3x3 grid to check
- *
- * Return: 1 if stable, 0 if not
- *
- * Description: A grid is considered unstable if any cell has more
- * than 3 grains of sand.
+ * is_sandpile - Checks if the grid contains valid
+ * sandiles int < 3
+ * @grid: type int a sandpile 3 x 3
+ * Return: void
  */
-int is_stable(int grid[3][3])
+static int is_sandpile(int grid[3][3])
 {
 	int i, j;
 
@@ -47,59 +45,18 @@ int is_stable(int grid[3][3])
 	return (1);
 }
 
-/**
- * topple - Topples the sandpile grid to make it stable
- * @grid: The 3x3 grid to topple
- *
- * Description: For any cell with more than 3 grains, it topples,
- * distributing 1 grain to each of its neighbors.
- */
-void topple(int grid[3][3])
-{
-	int i, j;
-	int temp[3][3] = {0};
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			if (grid[i][j] > 3)
-			{
-				temp[i][j] -= 4;
-				if (i > 0)
-					temp[i - 1][j] += 1;
-				if (i < 2)
-					temp[i + 1][j] += 1;
-				if (j > 0)
-					temp[i][j - 1] += 1;
-				if (j < 2)
-					temp[i][j + 1] += 1;
-			}
-		}
-	}
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			grid[i][j] += temp[i][j];
-		}
-	}
-}
 
 /**
- * sandpiles_sum - Computes the sum of two sandpiles
- * @grid1: The first 3x3 grid
- * @grid2: The second 3x3 grid
- *
- * Description: Adds grid2 to grid1 and stabilizes grid1
- * if needed by repeatedly toppling the grid until it is stable.
+ * sum_grids - sum grids grid1 and grid2
+ * @grid1: type int a sandpile 3 x 3
+ * @grid2: type int a sandpile 3 x 3
+ * Return: void
  */
-void sandpiles_sum(int grid1[3][3], int grid2[3][3])
+
+static void sum_grids(int grid1[3][3], int grid2[3][3])
 {
 	int i, j;
 
-	/* Step 1: Add grid2 to grid1 */
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -107,12 +64,66 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 			grid1[i][j] += grid2[i][j];
 		}
 	}
+}
 
-	/* Step 2: Stabilize grid1 */
-	while (!is_stable(grid1))
+
+/**
+ * topple - Move across the grid to operate a sum3
+ * @grid: type int a sandpile 3 x 3
+ * @nextpile: type int temporary grid with the sandpile 3 x 3
+ * Return: void
+ */
+
+static void topple(int grid[3][3], int nextpile[3][3])
+{
+	int i, j;
+
+	for (i = 0; i < 3; i++)
 	{
-		printf("=\n");
+		for (j = 0; j < 3; j++)
+		{
+			nextpile[i][j] = 0;
+		}
+	}
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (grid[i][j] > 3)
+			{
+				nextpile[i][j] -= 4;
+				if (i + 1 < 3)
+					nextpile[i + 1][j] += 1;
+				if (i - 1 >= 0)
+					nextpile[i - 1][j] += 1;
+				if (j + 1 < 3)
+					nextpile[i][j + 1] += 1;
+				if (j - 1 >= 0)
+					nextpile[i][j - 1] += 1;
+			}
+		}
+	}
+}
+
+
+
+/**
+ * sandpiles_sum -sum iteratively two sandpiles
+ * @grid1: type int a sandpile 3 x 3
+ * @grid2: type int a sandpile 3 x 3
+ * Return: void
+ */
+
+void sandpiles_sum(int grid1[3][3], int grid2[3][3])
+{
+
+	int nextpiles[3][3];
+
+	sum_grids(grid1, grid2);
+	while (is_sandpile(grid1) == 0)
+	{
 		print_grid(grid1);
-		topple(grid1);
+		topple(grid1, nextpiles);
+		sum_grids(grid1, nextpiles);
 	}
 }
