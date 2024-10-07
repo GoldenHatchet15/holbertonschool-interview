@@ -2,12 +2,15 @@
 """
 Log parsing script.
 
-This script reads lines from stdin, processes each line to extract the IP address,
-status code, and file size, and prints statistics every 10 lines or when interrupted.
+This script reads lines from stdin,
+processes each line to extract the IP address,
+status code, and file size,
+and prints statistics every 10 lines or when interrupted.
 
 Metrics computed:
 - Total file size
-- Number of occurrences of each status code (200, 301, 400, 401, 403, 404, 405, 500).
+- Number of occurrences
+of each status code (200, 301, 400, 401, 403, 404, 405, 500).
 """
 import sys
 
