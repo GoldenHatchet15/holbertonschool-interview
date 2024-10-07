@@ -1,17 +1,16 @@
 #!/usr/bin/python3
+#!/usr/bin/python3
 """
 Log parsing script.
 
-This script reads lines from stdin,
-processes each line to extract the IP address,
-status code, and file size,
-and prints statistics every 10 lines or when interrupted.
+Reads stdin line by line, extracts IP, status code, and file size,
+and prints statistics every 10 lines or on keyboard interruption.
 
 Metrics computed:
 - Total file size
-- Number of occurrences
-of each status code (200, 301, 400, 401, 403, 404, 405, 500).
+- Number of occurrences of each status code (200, 301, 400, 401, 403, 404, 405, 500)
 """
+
 import sys
 
 total_file_size = 0
@@ -19,6 +18,7 @@ status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 line_count = 0
 
 
+""" Print the metrics. """
 def print_stats():
     """Print the metrics."""
     print("File size: {}".format(total_file_size))
