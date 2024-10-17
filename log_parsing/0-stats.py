@@ -1,5 +1,10 @@
 #!/usr/bin/python3
-"""Script to get stats from a request"""
+#!/usr/bin/python3
+"""
+A Python script that reads from stdin line by line, parses HTTP logs,
+and prints statistics (total file size and status codes count).
+"""
+
 
 import sys
 
@@ -10,6 +15,9 @@ size = 0
 
 try:
     for ln in sys.stdin:
+        if not ln.strip():
+            continue  # Ignore empty input
+
         if count == 10:
             print("File size: {}".format(size))
             for key in sorted(codes):
@@ -21,7 +29,7 @@ try:
         ln = ln.split()
 
         try:
-            size = size + int(ln[-1])
+            size += int(ln[-1])
         except (IndexError, ValueError):
             pass
 
@@ -34,11 +42,13 @@ try:
         except IndexError:
             pass
 
+    # Print remaining stats after all lines are processed
     print("File size: {}".format(size))
     for key in sorted(codes):
         print("{}: {}".format(key, codes[key]))
 
 except KeyboardInterrupt:
+    # Handle Ctrl+C interruption and print the current stats
     print("File size: {}".format(size))
     for key in sorted(codes):
         print("{}: {}".format(key, codes[key]))
