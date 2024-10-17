@@ -1,41 +1,45 @@
 #!/usr/bin/python3
+"""Script to get stats from a request"""
+
 import sys
 
-total_file_size = 0
-status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
-
-def print_stats():
-    """Prints the current statistics."""
-    print("File size: {}".format(total_file_size))
-    for code in sorted(status_codes.keys()):
-        if status_codes[code] > 0:
-            print("{}: {}".format(code, status_codes[code]))
+codes = {}
+status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
+count = 0
+size = 0
 
 try:
-    for line in sys.stdin:
-        line_count += 1
+    for ln in sys.stdin:
+        if count == 10:
+            print("File size: {}".format(size))
+            for key in sorted(codes):
+                print("{}: {}".format(key, codes[key]))
+            count = 1
+        else:
+            count += 1
+
+        ln = ln.split()
 
         try:
-            parts = line.split()
-            ip, _, _, date, request, status_code, file_size = parts[0], parts[1], parts[2], parts[3], parts[4], parts[-2], parts[-1]
+            size = size + int(ln[-1])
+        except (IndexError, ValueError):
+            pass
 
-            # Update total file size
-            total_file_size += int(file_size)
+        try:
+            if ln[-2] in status_codes:
+                if codes.get(ln[-2], -1) == -1:
+                    codes[ln[-2]] = 1
+                else:
+                    codes[ln[-2]] += 1
+        except IndexError:
+            pass
 
-            # Update status code count
-            if int(status_code) in status_codes:
-                status_codes[int(status_code)] += 1
-
-        except (ValueError, IndexError):
-            # Skip lines that don't fit the expected format
-            continue
-
-        if line_count % 10 == 0:
-            print_stats()
+    print("File size: {}".format(size))
+    for key in sorted(codes):
+        print("{}: {}".format(key, codes[key]))
 
 except KeyboardInterrupt:
-    print_stats()
+    print("File size: {}".format(size))
+    for key in sorted(codes):
+        print("{}: {}".format(key, codes[key]))
     raise
-
-print_stats()
