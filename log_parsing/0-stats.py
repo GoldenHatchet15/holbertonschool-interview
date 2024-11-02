@@ -1,54 +1,39 @@
 #!/usr/bin/python3
-"""
-A Python script that reads from stdin line by line, parses HTTP logs,
-and prints statistics (total file size and status codes count).
-
-The script handles the following:
-- Valid log lines with IP address, date, request, status code, and file size.
-- Prints statistics every 10 lines or upon receiving a keyboard interruption (CTRL+C).
-- Handles errors like malformed lines or empty input.
-"""
-
+'''Module for log parsing script.'''
 import sys
 
-# Initialize required variables
-codes = {}
-status_codes = ['200', '301', '400', '401', '403', '404', '405', '500']
-count = 0
-size = 0
+if __name__ == "__main__":
+    size = [0]
+    codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 
-def print_stats():
-    """Prints the file size and status code statistics"""
-    print("File size: {}".format(size))
-    for key in sorted(codes):
-        print("{}: {}".format(key, codes[key]))
-
-try:
-    for ln in sys.stdin:
-        if not ln.strip():
-            continue  # Skip empty lines
-
-        ln = ln.split()
-
+    def check_match(line):
+        '''Checks for matching log line and updates metrics.'''
         try:
-            # Attempt to process the file size
-            size += int(ln[-1])
+            line = line.strip()
+            words = line.split(" ")
+            size[0] += int(words[-1])
+            code = int(words[-2])
+            if code in codes:
+                codes[code] += 1
+        except (ValueError, IndexError):
+            pass
 
-            # Attempt to update status code counts
-            if ln[-2] in status_codes:
-                codes[ln[-2]] = codes.get(ln[-2], 0) + 1
-        except (IndexError, ValueError):
-            continue  # Skip malformed lines
+    def print_stats():
+        '''Prints accumulated statistics.'''
+        print("File size: {}".format(size[0]))
+        for k in sorted(codes.keys()):
+            if codes[k]:
+                print("{}: {}".format(k, codes[k]))
 
-        count += 1
-        if count == 10:
-            print_stats()
-            count = 0
+    i = 1
+    try:
+        for line in sys.stdin:
+            check_match(line)
+            if i % 10 == 0:
+                print_stats()
+            i += 1
+    except KeyboardInterrupt:
+        print_stats()
+        sys.exit(0)  # Exit gracefully
 
-    # After finishing input, print remaining stats
     print_stats()
-
-except KeyboardInterrupt:
-    # Handle CTRL+C by printing current stats before exiting
-    print_stats()
-    raise
