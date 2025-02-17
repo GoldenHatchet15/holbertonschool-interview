@@ -6,8 +6,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+
 /**
  * struct skiplist_s - Singly linked list with an express lane
+ *
  * @n: Integer
  * @index: Index of the node in the list
  * @next: Pointer to the next node
