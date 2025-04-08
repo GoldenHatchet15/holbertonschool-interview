@@ -12,7 +12,11 @@ def count_words(subreddit, word_list, word_count={}, after=None):
     params = {'after': after}
 
     try:
-        response = requests.get(url, headers=headers, params=params, allow_redirects=False)
+        response = requests.get(
+            url,
+            headers=headers,
+            params=params,
+            allow_redirects=False)
         if response.status_code != 200:
             return
 
@@ -39,7 +43,8 @@ def count_words(subreddit, word_list, word_count={}, after=None):
             if not word_count:
                 return
             # Sort by count descending, then alphabetically
-            sorted_counts = sorted(word_count.items(), key=lambda item: (-item[1], item[0]))
+            sorted_counts = sorted(
+                word_count.items(), key=lambda item: (-item[1], item[0]))
             for word, count in sorted_counts:
                 print(f"{word}: {count}")
     except Exception:
