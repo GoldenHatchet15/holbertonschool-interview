@@ -1,6 +1,6 @@
 #include "binary_trees.h"
 #include <limits.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 
 
 /**
