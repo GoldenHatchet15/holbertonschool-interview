@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 /**
  * match - checks if the substring matches the concatenation of all words
  * @s: pointer to substring
@@ -14,7 +12,7 @@
  *
  * Return: 1 if match, 0 otherwise
  */
-int match(char *s, struct word_count *wc, int wc_size,
+static int match(char *s, word_count_t *wc, int wc_size,
 		  int word_len, int nb_words)
 {
 	int i, j, found;
@@ -63,11 +61,13 @@ int match(char *s, struct word_count *wc, int wc_size,
  *
  * Return: array of word_count structs
  */
-struct word_count *build_word_count(const char **words,
-int nb_words, int *count)
+static word_count_t *build_word_count(
+	const char **words,
+	int nb_words,
+	int *count)
 {
 	int i, j;
-	struct word_count *wc = calloc(nb_words, sizeof(struct word_count));
+	word_count_t *wc = calloc(nb_words, sizeof(word_count_t));
 
 	if (!wc)
 		return (NULL);
@@ -106,7 +106,7 @@ int nb_words, int *count)
  *
  * Return: array of valid starting indices
  */
-int *collect_indices(const char *s, struct word_count *wc, int count,
+static int *collect_indices(const char *s, word_count_t *wc, int count,
 					 int word_len, int nb_words, int s_len, int total_len, int *n)
 {
 	int i;
@@ -142,8 +142,9 @@ int *collect_indices(const char *s, struct word_count *wc, int count,
 int *find_substring(const char *s, const char **words, int nb_words, int *n)
 {
 	int word_len, total_len, s_len, count;
-	struct word_count *wc;
+	word_count_t *wc;
 	int *indices;
+	int i;
 
 	if (!s || !words || nb_words == 0)
 		return (NULL);
@@ -162,7 +163,7 @@ int *find_substring(const char *s, const char **words, int nb_words, int *n)
 s, wc, count, word_len, nb_words, s_len, total_len, n
 );
 
-	for (int i = 0; i < count; i++)
+	for (i = 0; i < count; i++)
 		free(wc[i].word);
 	free(wc);
 
